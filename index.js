@@ -19,7 +19,7 @@ const httpClientConfig = AUTH ? {
     agent: {
 		https: tunnel.httpsOverHttp({
 			proxy: {
-                host: 'localhost',
+                host: 'host.docker.internal',
                 port: 29418
 			}
 		})
