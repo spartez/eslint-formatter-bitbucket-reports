@@ -3,19 +3,23 @@ const stylish = require('eslint/lib/cli-engine/formatters/stylish');
 const got = require('got');
 const { HttpProxyAgent } = require('hpagent')
 
-const { BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT, AUTH } = process.env;
+const { BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT, BITBUCKET_API_AUTH } = process.env;
 
 const BITBUCKET_API_HOST = 'api.bitbucket.org/2.0/';
 
 const MAX_ANNOTATIONS_PER_REQUEST = 100;
 
-const httpClientConfig = AUTH ? {
+const httpClientConfig = BITBUCKET_API_AUTH ? {
     prefixUrl: `https://${BITBUCKET_API_HOST}`,
     headers: {
-        'Authorization': AUTH
+        'Authorization': BITBUCKET_API_AUTH,
+        'Content-Type': 'application/json'
     }
 } : {
     prefixUrl: `http://${BITBUCKET_API_HOST}`,
+    headers: {
+        'Content-Type': 'application/json'
+    },
     agent: {
 		http: new HttpProxyAgent({
 			proxy: 'http://localhost:29418'
