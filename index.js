@@ -19,7 +19,8 @@ const httpClientConfig = AUTH ? {
     agent: {
 		https: tunnel.httpsOverHttp({
 			proxy: {
-				host: 'localhost'
+                host: 'localhost',
+                port: 29418
 			}
 		})
 	}
