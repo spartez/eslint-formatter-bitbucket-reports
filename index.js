@@ -1,7 +1,7 @@
 const path = require('path');
 const stylish = require('eslint/lib/cli-engine/formatters/stylish');
 const got = require('got');
-const { HttpProxyAgent } = require('hpagent')
+const globalTunnel = require('global-tunnel');
 
 const { BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT, BITBUCKET_API_AUTH } = process.env;
 
@@ -11,20 +11,20 @@ const MAX_ANNOTATIONS_PER_REQUEST = 100;
 
 const httpClientConfig = BITBUCKET_API_AUTH ? {
     prefixUrl: `https://${BITBUCKET_API_HOST}`,
+    responseType: 'json',
     headers: {
-        'Authorization': BITBUCKET_API_AUTH,
-        'Content-Type': 'application/json'
+        'Authorization': BITBUCKET_API_AUTH
     }
 } : {
     prefixUrl: `http://${BITBUCKET_API_HOST}`,
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    agent: {
-		http: new HttpProxyAgent({
-			proxy: 'http://localhost:29418'
-		})
-	}
+    responseType: 'json'
+}
+
+if (!BITBUCKET_API_AUTH) {
+    globalTunnel.initialize({
+        host: 'localhost',
+        port: 29418,
+    });
 }
 
 const httpClient = got.extend(httpClientConfig);
