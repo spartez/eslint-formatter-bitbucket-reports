@@ -16,7 +16,7 @@ const httpClientConfig = BITBUCKET_API_AUTH ? {
         'Authorization': BITBUCKET_API_AUTH
     }
 } : {
-    prefixUrl: `http://${BITBUCKET_API_HOST}`,
+    prefixUrl: `http://localhost:29418`,
     responseType: 'json',
     headers: {
         'Host': 'api.bitbucket.org'
@@ -25,9 +25,7 @@ const httpClientConfig = BITBUCKET_API_AUTH ? {
         beforeRequest: [
             options => {
                 console.log('options', options);
-                options.host = 'localhost';
-                options.port = 29418;
-                options.pathname = `http://${BITBUCKET_API_HOST}/${options.pathname}`;
+                options.path = `http://${BITBUCKET_API_HOST}/${options.url.pathname}`;
             }
         ]
     }
