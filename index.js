@@ -17,7 +17,7 @@ const httpClientConfig = AUTH ? {
 } : {
     prefixUrl: `http://${BITBUCKET_API_HOST}`,
     agent: {
-		https: tunnel.httpOverHttp({
+		http: tunnel.httpOverHttp({
 			proxy: {
                 host: 'localhost',
                 port: 29418
@@ -103,8 +103,6 @@ async function processResults(results) {
     const reportId = `eslint-${BITBUCKET_COMMIT}`;
     const report = generateReport(results);
     const annotations = generateAnnotations(results, reportId);
-    console.log(JSON.stringify(report));
-    console.log(JSON.stringify(annotations));
 
     try {
         await deleteReport(reportId);
