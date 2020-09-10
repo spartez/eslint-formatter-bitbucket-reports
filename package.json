@@ -1,6 +1,6 @@
 {
   "name": "eslint-formatter-bitbucket-reports",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "ESLint formatter that uploads results as Bitbucket report",
   "main": "index.js",
   "author": "Spartez Software",
