@@ -5,21 +5,21 @@ const tunnel = require('tunnel');
 
 const { BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT, AUTH } = process.env;
 
-const BITBUCKET_API_URL = 'https://api.bitbucket.org/2.0/';
+const BITBUCKET_API_HOST = 'api.bitbucket.org/2.0/';
 
 const MAX_ANNOTATIONS_PER_REQUEST = 100;
 
 const httpClientConfig = AUTH ? {
-    prefixUrl: BITBUCKET_API_URL,
+    prefixUrl: `https://${BITBUCKET_API_HOST}`,
     headers: {
         'Authorization': AUTH
     }
 } : {
-    prefixUrl: BITBUCKET_API_URL,
+    prefixUrl: `http://${BITBUCKET_API_HOST}`,
     agent: {
-		https: tunnel.httpsOverHttp({
+		https: tunnel.httpOverHttp({
 			proxy: {
-                host: 'host.docker.internal',
+                host: 'localhost',
                 port: 29418
 			}
 		})
