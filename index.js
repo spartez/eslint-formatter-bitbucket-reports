@@ -5,7 +5,7 @@ const http = require('http');
 
 const { BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT, BITBUCKET_API_AUTH } = process.env;
 
-const BITBUCKET_API_HOST = 'api.bitbucket.org/2.0/';
+const BITBUCKET_API_HOST = 'api.bitbucket.org';
 
 const MAX_ANNOTATIONS_PER_REQUEST = 100;
 
@@ -19,9 +19,17 @@ const httpClientConfig = BITBUCKET_API_AUTH ? {
     prefixUrl: `http://${BITBUCKET_API_HOST}`,
     responseType: 'json',
     headers: {
-        'User-Agent': 'curl/7.38.0',
-        'Accept': '*/*',
-        'Proxy-Connection': 'Keep-Alive'
+        'Host': 'api.bitbucket.org'
+    },
+    hooks: {
+        beforeRequest: [
+            options => {
+                console.log('options', options);
+                options.host = 'localhost';
+                options.port = 29418;
+                options.pathname = `http://${BITBUCKET_API_HOST}/${options.pathname}`;
+            }
+        ]
     }
 }
 
@@ -76,11 +84,11 @@ function generateAnnotations(results, reportId) {
 }
 
 async function deleteReport(reportId) {
-    return httpClient.delete(`repositories/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}`);
+    return httpClient.delete(`2.0/repositories/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}`);
 }
 
 async function createReport(reportId, report) {
-    return httpClient.put(`repositories/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}`, {
+    return httpClient.put(`2.0/repositories/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}`, {
         json: report,
         responseType: 'json'
     });
@@ -88,7 +96,7 @@ async function createReport(reportId, report) {
 
 async function createAnnotations(reportId, annotations) {
     const chunk = annotations.slice(0, MAX_ANNOTATIONS_PER_REQUEST);
-    const response = await httpClient.post(`repositories/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}/annotations`, {
+    const response = await httpClient.post(`2.0/repositories/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}/annotations`, {
         json: chunk,
         responseType: 'json'
     });
