@@ -110,6 +110,9 @@ async function processResults(results) {
         await createReport(reportId, report);
         await createAnnotations(reportId, annotations);
     } catch (error) {
+        if (error.request) {
+            console.log(error.request.options);
+        }
         if (error.response) {
             console.error(error.message, error.response.body)
         } else {
