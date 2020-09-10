@@ -1,0 +1,18 @@
+{
+  "name": "eslint-formatter-bitbucket-reports",
+  "version": "1.0.0",
+  "description": "ESLint formatter that uploads results as Bitbucket report",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Spartez Software",
+  "license": "MIT",
+  "peerDependencies": {
+    "eslint": "7.x"
+  },
+  "dependencies": {
+    "got": "^11.6.1",
+    "tunnel": "0.0.6"
+  }
+}
