@@ -24,8 +24,7 @@ const httpClientConfig = BITBUCKET_API_AUTH ? {
     hooks: {
         beforeRequest: [
             options => {
-                console.log('options', options);
-                options.path = `http://${BITBUCKET_API_HOST}/${options.url.pathname}`;
+                options.path = `http://${BITBUCKET_API_HOST}${options.url.pathname}`;
             }
         ]
     }
@@ -104,37 +103,18 @@ async function createAnnotations(reportId, annotations) {
     return response;
 }
 
-function testProxy() {
-    return new Promise((resolve, reject) => {
-        const options = {
-            host: 'localhost',
-            port: 29418,
-            path: `http://api.bitbucket.org/2.0/repositories/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports`,
-            headers: {
-                Host: 'api.bitbucket.org'
-            }
-        };
-        http.get(options, res => {
-            console.log('REQUEST OK!');
-            console.log(res);
-            res.pipe(process.stdout);
-            resolve();
-        }).on('error', error => reject(error));
-    });
-    
-}
-
 async function processResults(results) {
     const reportId = `eslint-${BITBUCKET_COMMIT}`;
     const report = generateReport(results);
     const annotations = generateAnnotations(results, reportId);
 
     try {
-        await testProxy();
-
         await deleteReport(reportId);
+        console.log('Previous report deleted');
         await createReport(reportId, report);
+        console.log('New report created');
         await createAnnotations(reportId, annotations);
+        console.log('Annotations added');
     } catch (error) {
         if (error.request) {
             console.log(error.request.options);
