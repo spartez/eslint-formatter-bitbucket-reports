@@ -1,7 +1,7 @@
 const path = require('path');
 const stylish = require('eslint/lib/cli-engine/formatters/stylish');
 const got = require('got');
-const tunnel = require('tunnel');
+const { HttpProxyAgent } = require('hpagent')
 
 const { BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT, AUTH } = process.env;
 
@@ -17,11 +17,8 @@ const httpClientConfig = AUTH ? {
 } : {
     prefixUrl: `http://${BITBUCKET_API_HOST}`,
     agent: {
-		http: tunnel.httpOverHttp({
-			proxy: {
-                host: 'localhost',
-                port: 29418
-			}
+		http: new HttpProxyAgent({
+			proxy: 'http://localhost:29418'
 		})
 	}
 }

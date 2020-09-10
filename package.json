@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "got": "^11.6.1",
+    "hpagent": "^0.1.1",
     "tunnel": "0.0.6"
   }
 }
