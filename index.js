@@ -1,7 +1,7 @@
 const path = require('path');
 const stylish = require('eslint/lib/cli-engine/formatters/stylish');
 const got = require('got');
-const globalTunnel = require('global-tunnel');
+const http = require('http');
 
 const { BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT, BITBUCKET_API_AUTH } = process.env;
 
@@ -23,13 +23,6 @@ const httpClientConfig = BITBUCKET_API_AUTH ? {
         'Accept': '*/*',
         'Proxy-Connection': 'Keep-Alive'
     }
-}
-
-if (!BITBUCKET_API_AUTH) {
-    globalTunnel.initialize({
-        host: 'localhost',
-        port: 29418,
-    });
 }
 
 const httpClient = got.extend(httpClientConfig);
@@ -105,14 +98,33 @@ async function createAnnotations(reportId, annotations) {
     return response;
 }
 
+function testProxy() {
+    return new Promise((resolve, reject) => {
+        const options = {
+            host: 'localhost',
+            port: 29418,
+            path: `http://api.bitbucket.org/2.0/repositories/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports`,
+            headers: {
+                Host: 'api.bitbucket.org'
+            }
+        };
+        http.get(options, res => {
+            console.log('REQUEST OK!');
+            console.log(res);
+            res.pipe(process.stdout);
+            resolve();
+        }).on('error', error => reject(error));
+    });
+    
+}
+
 async function processResults(results) {
     const reportId = `eslint-${BITBUCKET_COMMIT}`;
     const report = generateReport(results);
     const annotations = generateAnnotations(results, reportId);
 
     try {
-        const response = await httpClient.get(`repositories/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports`);
-        console.log(response);
+        await testProxy();
 
         await deleteReport(reportId);
         await createReport(reportId, report);
