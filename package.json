@@ -9,7 +9,6 @@
     "eslint": "7.x"
   },
   "dependencies": {
-    "global-tunnel": "^1.2.0",
     "got": "^11.6.1"
   }
 }

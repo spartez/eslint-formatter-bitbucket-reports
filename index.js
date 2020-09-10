@@ -1,7 +1,6 @@
 const path = require('path');
 const stylish = require('eslint/lib/cli-engine/formatters/stylish');
 const got = require('got');
-const http = require('http');
 
 const { BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT, BITBUCKET_API_AUTH } = process.env;
 
