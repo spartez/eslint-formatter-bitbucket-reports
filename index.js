@@ -17,7 +17,12 @@ const httpClientConfig = BITBUCKET_API_AUTH ? {
     }
 } : {
     prefixUrl: `http://${BITBUCKET_API_HOST}`,
-    responseType: 'json'
+    responseType: 'json',
+    headers: {
+        'User-Agent': 'curl/7.38.0',
+        'Accept': '*/*',
+        'Proxy-Connection': 'Keep-Alive'
+    }
 }
 
 if (!BITBUCKET_API_AUTH) {
@@ -106,6 +111,9 @@ async function processResults(results) {
     const annotations = generateAnnotations(results, reportId);
 
     try {
+        const response = await httpClient.get(`repositories/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports`);
+        console.log(response);
+
         await deleteReport(reportId);
         await createReport(reportId, report);
         await createAnnotations(reportId, annotations);
