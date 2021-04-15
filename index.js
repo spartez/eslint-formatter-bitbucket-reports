@@ -64,9 +64,9 @@ function generateReport(results) {
 function generateAnnotations(results, reportId) {
     return results.reduce((acc, result) => {
         const relativePath = path.relative(process.cwd(), result.filePath);
-        return [...acc, ...result.messages.map(messageObject => {
+        return [...acc, ...result.messages.map((messageObject, i) => {
             const { line, message, severity, ruleId } = messageObject;
-            const external_id = `${reportId}-${relativePath}-${line}-${ruleId}`;
+            const external_id = `${reportId}-${relativePath}-${line}-${ruleId}-${i}`;
             return {
                 external_id,
                 line,
